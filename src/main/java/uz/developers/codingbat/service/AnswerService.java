@@ -7,7 +7,6 @@ import uz.developers.codingbat.payload.Result;
 import java.util.List;
 
 public interface AnswerService {
-
     List<Answer> getAnswers();
 
     Answer getAnswer(Integer id);
