@@ -1,6 +1,8 @@
 package uz.developers.codingbat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.codingbat.entity.Language;
 import uz.developers.codingbat.entity.Task;
@@ -17,8 +19,9 @@ public class LanguageController {
     LanguageService languageService;
 
     @GetMapping
-    public List<Language> getLanguages(){
-        return languageService.getLanguages();
+    public ResponseEntity<List<Language>> getLanguages(){
+        List<Language> languages = languageService.getLanguages();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(languages);
     }
     @GetMapping("/{id}")
     public Language getLanguage(@PathVariable Integer id){
@@ -26,17 +29,29 @@ public class LanguageController {
     }
 
     @PostMapping
-    public Result addLanguage(@RequestBody Language language){
-        return languageService.addLanguage(language);
+    public ResponseEntity<Result> addLanguage(@RequestBody Language language){
+        Result result = languageService.addLanguage(language);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @PutMapping("/{id}")
-    public Result editLanguage(@PathVariable Integer id, @RequestBody Language language){
-        return languageService.editLanguage(id,language);
+    public ResponseEntity<Result> editLanguage(@PathVariable Integer id, @RequestBody Language language){
+        Result result = languageService.editLanguage(id, language);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @DeleteMapping("/{id}")
-    public Result deleteLanguage(@PathVariable Integer id){
-        return languageService.deleteLanguage(id);
+    public ResponseEntity<Result> deleteLanguage(@PathVariable Integer id){
+        Result result = languageService.deleteLanguage(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 }

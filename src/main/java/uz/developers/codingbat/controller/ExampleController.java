@@ -1,6 +1,8 @@
 package uz.developers.codingbat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.codingbat.entity.Example;
 import uz.developers.codingbat.entity.Task;
@@ -18,8 +20,9 @@ public class ExampleController {
     ExampleService exampleService;
 
     @GetMapping
-    public List<Example> getExamples(){
-        return exampleService.getExamples();
+    public ResponseEntity<List<Example>> getExamples(){
+        List<Example> examples = exampleService.getExamples();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(examples);
     }
     @GetMapping("/{id}")
     public Example getExample(@PathVariable Integer id){
@@ -27,17 +30,29 @@ public class ExampleController {
     }
 
     @PostMapping
-    public Result addExample(@RequestBody ExampleDto exampleDto){
-        return exampleService.addExample(exampleDto);
+    public ResponseEntity<Result> addExample(@RequestBody ExampleDto exampleDto){
+        Result result = exampleService.addExample(exampleDto);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @PutMapping("/{id}")
-    public Result editExample(@PathVariable Integer id, @RequestBody ExampleDto exampleDto){
-        return exampleService.editExample(id,exampleDto);
+    public ResponseEntity<Result> editExample(@PathVariable Integer id, @RequestBody ExampleDto exampleDto){
+        Result result = exampleService.editExample(id, exampleDto);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @DeleteMapping("/{id}")
-    public Result deleteExample(@PathVariable Integer id){
-        return exampleService.deleteExample(id);
+    public ResponseEntity<Result> deleteExample(@PathVariable Integer id){
+        Result result = exampleService.deleteExample(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 }

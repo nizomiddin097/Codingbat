@@ -8,6 +8,7 @@ import uz.developers.codingbat.repository.CategoryRepository;
 import uz.developers.codingbat.service.CategoryService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -16,26 +17,45 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getCategories() {
-        return null;
+       return categoryRepository.findAll();
     }
 
     @Override
     public Category getCategory(Integer id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            return optionalCategory.get();
+        }
         return null;
     }
 
     @Override
     public Result addCategory(Category category) {
-        return null;
+        boolean existsByName = categoryRepository.existsByName(category.getName());
+        if (existsByName) {
+            return new Result("Such category already exist",false);
+        }
+        categoryRepository.save(category);
+        return new Result("Category is saved",true);
+
     }
 
     @Override
     public Result editCategory(Integer id, Category category) {
-        return null;
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isEmpty()) {
+            return new Result("Such category is not found",false);
+        }
+        Category editedCategory = optionalCategory.get();
+        editedCategory.setName(category.getName());
+        editedCategory.setDescription(category.getDescription());
+        categoryRepository.save(editedCategory);
+        return new Result("Category is edited",true);
     }
 
     @Override
     public Result deleteCategory(Integer id) {
-        return null;
+        categoryRepository.deleteById(id);
+        return new Result("Category is deleted",true);
     }
 }

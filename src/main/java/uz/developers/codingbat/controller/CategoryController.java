@@ -1,6 +1,8 @@
 package uz.developers.codingbat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.codingbat.entity.Category;
 import uz.developers.codingbat.entity.Task;
@@ -18,8 +20,9 @@ public class CategoryController {
 
 
     @GetMapping
-    public List<Category> getCategories(){
-        return categoryService.getCategories();
+    public ResponseEntity<List<Category>> getCategories(){
+        List<Category> categories = categoryService.getCategories();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(categories);
     }
     @GetMapping("/{id}")
     public Category getCategory(@PathVariable Integer id){
@@ -27,17 +30,30 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Result addCategory(@RequestBody Category category){
-        return categoryService.addCategory(category);
+    public ResponseEntity<Result> addCategory(@RequestBody Category category){
+        Result result = categoryService.addCategory(category);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+
     }
 
     @PutMapping("/{id}")
-    public Result editCategory(@PathVariable Integer id, @RequestBody Category category){
-        return categoryService.editCategory(id,category);
+    public ResponseEntity<Result> editCategory(@PathVariable Integer id, @RequestBody Category category){
+        Result result = categoryService.editCategory(id, category);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @DeleteMapping("/{id}")
-    public Result deleteCategory(@PathVariable Integer id){
-        return categoryService.deleteCategory(id);
+    public ResponseEntity<Result> deleteCategory(@PathVariable Integer id){
+        Result result = categoryService.deleteCategory(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 }

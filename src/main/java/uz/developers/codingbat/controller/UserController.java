@@ -1,6 +1,8 @@
 package uz.developers.codingbat.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.developers.codingbat.entity.User;
 import uz.developers.codingbat.payload.Result;
@@ -16,8 +18,9 @@ public class UserController {
 
 
     @GetMapping
-    public List<User> getInputs(){
-        return userService.getUsers();
+    public ResponseEntity<List<User>> getInputs(){
+        List<User> users = userService.getUsers();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(users);
     }
     @GetMapping("/{id}")
     public User getUser(@PathVariable Integer id){
@@ -25,18 +28,30 @@ public class UserController {
     }
 
     @PostMapping
-    public Result addUser(@RequestBody User user){
-        return userService.addUser(user);
+    public ResponseEntity<Result> addUser(@RequestBody User user){
+        Result result = userService.addUser(user);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @PutMapping("/{id}")
-    public Result editUser(@PathVariable Integer id, @RequestBody User user){
-        return userService.editUser(id,user);
+    public ResponseEntity<Result> editUser(@PathVariable Integer id, @RequestBody User user){
+        Result result = userService.editUser(id, user);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
     @DeleteMapping("/{id}")
-    public Result deleteUser(@PathVariable Integer id){
-        return userService.deleteUser(id);
+    public ResponseEntity<Result> deleteUser(@PathVariable Integer id){
+        Result result = userService.deleteUser(id);
+        if (result.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
 
